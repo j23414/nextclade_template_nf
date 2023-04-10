@@ -5,7 +5,7 @@ Small exploration of creating nextclade datasets based on the following template
 * https://github.com/nextstrain/nextclade_dataset_template
 
 ```
-nextflow run j23414/nextclade_template.nf -r main \
+nextflow run j23414/nextclade_template_nf -r main \
   --reference "GenBankID" \
   --fasta "path/to/reference/fasta_to_build_tree_json"
 ```
