@@ -7,7 +7,8 @@ include { version as nextclade_version;
 
 include { align as augur_align;
           tree as augur_tree;
-          export as augur_export } from './modules/augur.nf'
+          export as augur_export;
+          traits as augur_traits } from './modules/augur.nf'
 
 workflow {
     nextclade_version()
@@ -23,6 +24,8 @@ workflow {
         | view { it -> "Fasta Input: $it"}
         | augur_align
         | augur_tree
+//        | combine(channel.fromPath("$params.metadata"))
+//        | augur_traits
 //        | augur_export
         | view
     }
