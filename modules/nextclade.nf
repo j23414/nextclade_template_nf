@@ -31,3 +31,19 @@ process generate_from_genbank {
   python generate_from_genbank.py --reference ${genbank_id} --output-dir virus_nextclade_dataset
   """
 }
+
+process nextclade_run {
+  input: tuple path(fasta), path(zipped)
+  output: tuple path("output_alignment.fasta"), path("translations.zip"), path("insertions.csv"
+  script:
+  """
+  nextclade run \
+    -D ${zipped} \
+    -j 4 \
+    --retry-reverse-complement \
+    --output-fasta output_alignment.fasta  \
+    --output-translations translations.zip \
+    --output-insertions insertions.csv \
+    ${zipped}
+  """
+}
