@@ -29,14 +29,14 @@ process tree {
 
 process refine {
   input: tuple path(tree_nwk), path(aligned_fasta), path(metadata)
-  output: tuple path("refined_tree.nwk"), path("branch_labels.json")
+  output: tuple path("tree.nwk"), path("branch_labels.json")
   script:
   """
   augur refine \
   --tree ${tree_nwk} \
   --alignment ${aligned_fasta} \
   --metadata ${metadata} \
-  --output refined_tree.nwk \
+  --output-tree tree.nwk \
   --output-node-data branch_labels.json
   """
 }
@@ -49,7 +49,7 @@ process ancestral {
   augur ancestral \
   --tree ${tree_nwk} \
   --alignment ${aligned_fasta} \
-  --output ancestral_sequences.json \
+  --output-node-data nt-muts.json \
   --inference joint
   """
 }
@@ -69,7 +69,7 @@ process translate {
 
 process traits_clade_membership {
   input: tuple path(tree_nwk), path(metadata)
-  output: path("traits.json")
+  output: path("clade_membership.json")
   script:
   """
   augur traits \
@@ -80,16 +80,13 @@ process traits_clade_membership {
   """
 }
 
-
 process export {
   input: tuple path(nwk_tree), path(jsons)
   output: path("tree.json")
   script:
   """
-  // Requires some metadata as node-data.json, maybe with "strain" and "clade_membership" column? 
-  // Could include pathogen specific features such as gene constellations for flu
   augur export v2 \
-    --input ${nwk_tree} \  
+    --tree ${nwk_tree} \
     --node-data ${jsons} \
     --output tree.json
   """

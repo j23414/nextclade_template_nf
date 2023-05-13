@@ -13,7 +13,7 @@ process version {
 
 process generate_from_genbank {
   input: val(genbank_id)
-  output: path("virus_nextclade_dataset")
+  output: tuple path("virus_nextclade_dataset"), path("virus_nextclade_dataset/files/reference.fasta"), path("virus_nextclade_dataset/files/genemap.gff")
   script:
   """
   curl -fsSL --output generate_from_genbank.py https://raw.githubusercontent.com/nextstrain/nextclade_dataset_template/main/generate_from_genbank.py 
@@ -28,22 +28,25 @@ process generate_from_genbank {
   curl -fsSL --output files/tree.json https://raw.githubusercontent.com/nextstrain/nextclade_dataset_template/main/files/tree.json
   curl -fsSL --output files/virus_properties.json https://raw.githubusercontent.com/nextstrain/nextclade_dataset_template/main/files/virus_properties.json
 
-  python generate_from_genbank.py --reference ${genbank_id} --output-dir virus_nextclade_dataset
+  python generate_from_genbank.py \
+    --reference ${genbank_id} \
+    --output-dir virus_nextclade_dataset
   """
 }
 
-process nextclade_run {
-  input: tuple path(fasta), path(zipped)
-  output: tuple path("output_alignment.fasta"), path("translations.zip"), path("insertions.csv"
-  script:
-  """
-  nextclade run \
-    -D ${zipped} \
-    -j 4 \
-    --retry-reverse-complement \
-    --output-fasta output_alignment.fasta  \
-    --output-translations translations.zip \
-    --output-insertions insertions.csv \
-    ${zipped}
-  """
-}
+// process nextclade_run {
+//   input: tuple path(fasta), path(zipped)
+//   output: tuple path("output_alignment.fasta"), path("translations.zip"), path("insertions.csv"
+//   script:
+//   """
+//   #! /usr/bin/env bash
+//   nextclade run \
+//     -D ${zipped} \
+//     -j `nproc` \
+//     --retry-reverse-complement \
+//     --output-fasta output_alignment.fasta  \
+//     --output-translations translations.zip \
+//     --output-insertions insertions.csv \
+//     ${zipped}
+//   """
+// }
